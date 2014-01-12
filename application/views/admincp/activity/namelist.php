@@ -11,26 +11,30 @@
                     <thead>
                         <tr>
                             <th data-type="numeric">#</th>
-                            <th><?php echo lang('name'); ?></th>
-                            <th><?php echo lang('location'); ?></th>
-                            <th><?php echo lang('start_at'); ?></th>
+                            <th><?php echo lang('realname'); ?></th>
+                            <th><?php echo lang('community'); ?></th>
+                            <th><?php echo lang('signed'); ?></th>
+                            <th><?php echo lang('barcode'); ?></th>
                             <th data-sort-ignore="true"><?php echo lang('operate'); ?></th>
                         </tr>
                     </thead>
                     <tbody>
+<?php if ( empty($list) ): ?>
+                        <tr>
+                            <td colspan="11"><a href="<?php echo site_url(CLASS_URI.'/namelist_import'); ?>">无数据，上传表格</a></td>
+                        </tr>
+<?php else: ?>
 <?php foreach($list as $item): ?>
                         <tr>
-                            <td><?php echo $item['id']; ?></td>
+                            <td><?php echo $item['ordered_id']; ?></td>
                             <td>
-                                <a href="javascript:void(0);" data-type="text" data-name="name" data-pk="<?php echo $item['id']; ?>" data-placeholder="Required" data-original-title="<?php echo lang('name_title'); ?>"<?php if(! $item['name'] ) echo ' class="editable-click editable-empty"'; ?>><?php echo $item['name'] ? $item['name'] : 'Empty'; ?></a>
+                                <a href="javascript:void(0);" data-type="text" data-name="realname" data-pk="<?php echo $item['id']; ?>" data-placeholder="Required" data-original-title="<?php echo lang('realname_title'); ?>"<?php if(! $item['realname'] ) echo ' class="editable-click editable-empty"'; ?>><?php echo $item['realname'] ? $item['realname'] : 'Empty'; ?></a>
                             </td>
                             <td>
-                                <a href="javascript:void(0);" data-type="text" data-name="location" data-pk="<?php echo $item['id']; ?>" data-placeholder="Required" data-original-title="<?php echo lang('location_title'); ?>"<?php if(! $item['location'] ) echo ' class="editable-click editable-empty"'; ?>><?php echo $item['location'] ? $item['location'] : 'Empty'; ?></a>
+                                <a href="javascript:void(0);" data-type="text" data-name="community" data-pk="<?php echo $item['id']; ?>" data-placeholder="Required" data-original-title="<?php echo lang('community_title'); ?>"<?php if(! $item['community'] ) echo ' class="editable-click editable-empty"'; ?>><?php echo $item['community'] ? $item['community'] : 'Empty'; ?></a>
                             </td>
-                            <td>
-                                <a href="javascript:void(0);" data-type="datetime" data-name="start_at" data-pk="<?php echo $item['id']; ?>" data-placeholder="Required" data-original-title="<?php echo lang('start_at_title'); ?>"<?php if(! $item['start_at'] ) echo ' class="editable-click editable-empty"'; ?>><?php echo $item['start_at'] ? date('Y-m-d H:i', $item['start_at']) : 'Empty'; ?></a>
-                            </td>
-                            <td><span data-toggle="tooltip" title="<?php echo date('Y-m-d H:i:s', $item['created']); ?>"><?php echo time_past($item['created']); ?></span></td>
+                            <td><?php echo $item['signed'] ? '<span class="label">未到</span>' : '<span class="label-success" data-toggle="tooltip" title="'.date('Y-m-d H:i:s', $item['signed']).'">'.time_past($item['signed']).'</span>'; ?></td>
+                            <td><?php echo $item['barcode']; ?></td>
                             <td>
                                 <a href="<?php echo site_url('admincp/activity/namelist/'.$item['id']); ?>" title="<?php echo lang('namelist'); ?>"><i class="icon-barcode"></i><?php echo lang('namelist'); ?></a>
                                 <a href="<?php echo site_url('admincp/activity/modify/'.$item['id']); ?>" title="<?php echo lang('edit'); ?>"><i class="icon-edit"></i><?php echo lang('edit'); ?></a>
@@ -38,6 +42,7 @@
                             </td>
                         </tr>
 <?php endforeach; ?>
+<?php endif; ?>
                     </tbody>
                     <tfoot>
                         <tr>

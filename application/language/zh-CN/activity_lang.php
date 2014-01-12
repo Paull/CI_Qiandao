@@ -6,3 +6,9 @@ $lang['location'] = '活动地点';
 $lang['location_title'] = '请输入'.$lang['location'];
 $lang['start_at'] = '活动开始时间';
 $lang['start_at_title'] = '请选译'.$lang['start_at'];
+
+$lang['namelist'] = '名单';
+$lang['realname'] = '姓名';
+$lang['community'] = '社区';
+$lang['signed'] = '已签到';
+$lang['barcode'] = '条码编号';
