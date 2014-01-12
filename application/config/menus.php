@@ -8,13 +8,25 @@ return array(
         ),
         'collapse-members'  => array(
             'title'    => '权限管理',
-            'icon'     => 'customers.png',
+            'icon'     => 'lock.png',
             'children' => array(
                 'admincp/member' => array(
                     'title'=> '会员列表',
                 ),
                 'admincp/member/modify' => array(
                     'title'=> '添加会员',
+                ),
+            ),
+        ),
+        'collapse-activities'  => array(
+            'title'    => '活动管理',
+            'icon'     => 'customers.png',
+            'children' => array(
+                'admincp/activity' => array(
+                    'title'=> '活动列表',
+                ),
+                'admincp/activity/modify' => array(
+                    'title'=> '添加活动',
                 ),
             ),
         ),
