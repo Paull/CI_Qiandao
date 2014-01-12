@@ -536,6 +536,7 @@ if ( !function_exists('sync_database') )
     function sync_database($aid, $data)
     {
         if ( isset($data['error']) ) return $data;
+        require  APPPATH . 'libraries' . DIRECTORY_SEPARATOR . 'php-barcode.php';
         $CI =& get_instance();
         foreach($data['cells'] as $key=>$value)
         {
@@ -552,7 +553,18 @@ if ( !function_exists('sync_database') )
             }
             else
             {//不存在老数据，插入数据
-                $value['barcode'] = $CI->m_namelist->generate_uniqid();
+                $value['barcode_orign'] = $CI->m_namelist->generate_uniqid();
+
+                $bars = barcode_encode($value['barcode_orign'], 'ANY');
+                $barcode = '';
+                $numbers = explode(' ', $bars['text']);
+                foreach($numbers as $number)
+                {
+                    list(,,$tmp) = explode(':', $number);
+                    $barcode .= $tmp;
+                }
+                $value['barcode'] = substr($barcode_encoded, 1);
+
                 $value['id'] = $CI->m_namelist->modify($value);
                 $data['cells'][$key] = $CI->m_namelist->where('id', $value['id'])->limit(1)->get()->row_array();
             }

@@ -7,19 +7,44 @@ class Images extends CI_Controller {
         parent::__construct();
     }
 
-    public function test($aid, $page=0)
-    {
-        $this->load->model('m_namelist');
-        $aid = intval($aid);
-        $guests = $this->m_namelist->select('id, barcode')->where('aid', $aid)->like('barcode', 'd', 'right')->order_by('ordered_id')->get()->result_array();
-        foreach($guests as $key=>$value)
-        {
-            echo $value['id'], ' = ', $value['barcode'], '<br>';
-            $value['barcode'] = $this->m_namelist->generate_uniqid();
-            $this->m_namelist->modify($value);
-            echo $value['id'], ' = ', $value['barcode'], '<br>';
-        }
-    }
+    //public function test1($aid, $page=0)
+    //{
+    //    $this->load->model('m_namelist');
+    //    $aid = intval($aid);
+    //    $guests = $this->m_namelist->select('id, barcode')->where('aid', $aid)->like('barcode', 'd', 'right')->order_by('ordered_id')->get()->result_array();
+    //    foreach($guests as $key=>$value)
+    //    {
+    //        echo $value['id'], ' = ', $value['barcode'], '<br>';
+    //        $value['barcode'] = $this->m_namelist->generate_uniqid();
+    //        $this->m_namelist->modify($value);
+    //        echo $value['id'], ' = ', $value['barcode'], '<br>';
+    //    }
+    //}
+
+    //public function test2($aid, $page=0)
+    //{
+    //    $this->load->model('m_namelist');
+    //    require  APPPATH . 'libraries' . DIRECTORY_SEPARATOR . 'php-barcode.php';
+    //    $aid = intval($aid);
+    //    $guests = $this->m_namelist->select('id, barcode')->where('aid', $aid)->order_by('ordered_id')->get()->result_array();
+
+    //    foreach($guests as $key=>$value)
+    //    {
+    //        $bars = barcode_encode($value['barcode'], 'ANY');
+    //        $barcode_encoded = '';
+    //        $numbers = explode(' ', $bars['text']);
+    //        foreach($numbers as $number)
+    //        {
+    //            list(,,$tmp) = explode(':', $number);
+    //            $barcode_encoded .= $tmp;
+    //        }
+    //        $value['barcode_encoded'] = substr($barcode_encoded, 1);
+    //        echo $value['id'], ' = ', $value['barcode'], '=>', $value['barcode_encoded'];
+    //        echo '<br>';
+    //        unset($value['barcode']);
+    //        $this->m_namelist->modify($value);
+    //    }
+    //}
 
     public function create_image($aid, $page=0)
     {
