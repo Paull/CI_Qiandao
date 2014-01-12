@@ -21,7 +21,7 @@
                     <tbody>
 <?php if ( empty($list) ): ?>
                         <tr>
-                            <td colspan="11"><a href="<?php echo site_url(CLASS_URI.'/namelist_import'); ?>">无数据，上传表格</a></td>
+                            <td colspan="11"><a href="<?php echo site_url(CLASS_URI.'/namelist_import/'.$id); ?>">无数据，上传表格</a></td>
                         </tr>
 <?php else: ?>
 <?php foreach($list as $item): ?>

@@ -68,9 +68,9 @@ $('.editable').editable({
         $this->load->view($this->_layout, $this->_data);
     }
 
-    public function namelist($id=0)
+    public function namelist($id)
     {
-        $id = intval($id);
+        $this->_data['id'] = $id = intval($id);
         $activity = $this->{$this->_model}->where('id', $id)->get()->row_array();
         if ( empty($activity) )
         {
@@ -123,6 +123,84 @@ $('.editable').editable({
 });\n";
 
         $this->_data['list'] = $this->m_namelist->where('aid', $id)->order_by('ordered_id')->get()->result_array();
+
+        //加载模板
+        $this->load->view($this->_layout, $this->_data);
+    }
+
+    public function namelist_import($id)
+    {
+        $this->_data['id'] = $id = intval($id);
+        $activity = $this->{$this->_model}->where('id', $id)->get()->row_array();
+        if ( empty($activity) )
+        {
+            $this->load->view('common/message', array('message'=>"找不到指定的活动", 'url'=>site_url(CLASS_URI)));
+        }
+
+        $this->load->model('m_attachment');
+        $this->load->helper('number');
+
+        $this->_data['template']['title'] = '导入名单表格';
+        $this->_data['template']['breadcrumbs'][] = array('uri'=>CLASS_URI, 'title'=>'活动列表');
+        $this->_data['template']['breadcrumbs'][] = array('uri'=>METHOD_URI.'/'.$id, 'title'=>$activity['name']);
+        $this->_data['template']['breadcrumbs'][] = array('uri'=>METHOD_URI.'/'.$id, 'title'=>$this->_data['template']['title']);
+
+        $this->_data['template']['scripts'][] = STATIC_URL.'plugins/jquery.gritter/jquery.gritter.min.js';
+
+        $this->_data['template']['styles'][] = STATIC_URL.'plugins/jquery.uploadifive/uploadifive.css';
+        $this->_data['template']['scripts'][] = STATIC_URL.'plugins/jquery.uploadifive/jquery.uploadifive.min.js';
+
+        $this->_data['template']['javascript'] .= "
+jQuery('#uploader').uploadifive({
+    'fileObjName'      : 'filedata',
+    'uploadScript'     : '".base_url('api/uploader/uploadifive_file')."',
+    'multi'            : false,
+    'fileSizeLimit'    : '5MB',
+    'buttonText'       : '上传表格',
+    'buttonClass'      : 'btn btn-primary',
+    'itemTemplate'     : '',
+    'formData'         : {'timestamp': '{$_SERVER['REQUEST_TIME']}', 'token': '".md5('calendar'.$_SERVER['REQUEST_TIME'])."', 'hash': '".$this->security->get_csrf_hash()."'},
+    'onInit'           : function(){
+        $('#uploadifive-uploader').removeClass('uploadifive-button').find(\"input[type='file']:eq(1)\").height(74);
+    },
+    'onUploadComplete' : function(file, data) {
+        $('#uploadifive-uploader-queue').html('');
+        data = jQuery.parseJSON(data);
+        if(data.error){
+            jQuery.gritter.add({
+                title: '上传出错！',
+                text: data.error,
+                sticky: true
+            });
+        }
+        else{
+            jQuery.gritter.add({
+                title: '上传成功！',
+                text: '<dl><dt>文件名：'+data.client_name+'</dt><dd>大小：'+data.file_size+'</dd><dd>类型：'+data.file_type+'</dd><dt>请点击文件列表中的数据库进行下一步操作。</dt><dd>注意：目前只支持application/vnd.ms-excel文件类型</dl>',
+                sticky: false,
+                class_name: 'gritter-light'
+            });
+            table_filelist_prepend(data);
+            $('.btn-next').trigger('click');
+        }
+    },
+    width: 200,
+    height:60
+});
+var table_filelist_prepend = function(data){
+    var tr = $('<tr/>').prependTo('#filelist');
+    tr.append('<td>'+data.id+'</td>');
+    tr.append('<td>'+data.client_name+'</td>');
+    tr.append('<td>'+data.file_type+'</td>');
+    tr.append('<td>'+data.file_size+'</td>');
+    tr.append('<td>刚刚</td>');
+    tr.append('<td></td>');
+    tr.find('td:last').append('<a href=\"".base_url('admincp/activity/sheets')."/'+data.id+'.html\" class=\"btn btn-primary\">导入数据库</a>\\n')
+                      .append('<a href=\"".base_url('member/attachment/destroy')."/'+data.id+'\" class=\"btn btn-danger\" onclick=\"return confirm(\'该操作不可恢复！删除该文件？\');\">删除文件</a>');
+    if ($('#filelist tr').length > 11) $('#filelist tr:last').remove();
+};\n";
+
+        $this->_data['attachments'] = $this->m_attachment->limit(10)->order_by('id', 'DESC')->where('uid', $this->_data['self']['id'])->get()->result_array();
 
         //加载模板
         $this->load->view($this->_layout, $this->_data);
