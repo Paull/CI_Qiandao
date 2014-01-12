@@ -59,25 +59,6 @@ class M_namelist extends MY_Model {
     {
         $this->db->where('id', $id);
 
-        //非管理员帐号
-        if(! $ignore )
-        {
-            //增加权限判断
-            switch($this->session->userdata('identity'))
-            {
-                case 'superman':
-                    break;
-                case 'agent':
-                    $this->db->where_in('id', array_keys($this->_data['children']));
-                    break;
-                case 'member':
-                    $this->db->where('email', $this->session->userdata('email'));
-                    break;
-                default:
-                    exit('permission error');
-            }
-        }
-
         $this->db->update($this->_table, $data);
         $affected_rows = $this->db->affected_rows();
 
@@ -95,9 +76,9 @@ class M_namelist extends MY_Model {
      * Generates a salt that can be used to generate a password hash.
      * @return string the salt
      */
-    protected function _generate_salt()
+    public function generate_uniqid()
     {
-        return substr(uniqid(rand()), -6);
+        return substr(uniqid(rand()), 0, 10);
     }
 
 }

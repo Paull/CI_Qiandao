@@ -1,9 +1,12 @@
+<?php if ( isset($sheet['error']) ): ?>
+<div class="alert alert-error">
+    <button type="button" class="close" data-dismiss="alert">×</button>
+    <strong>出错!</strong> <?php echo $sheet['error']; ?>
+</div>
+<?php else: ?>
 <div class="row-fluid">
     <div class="span12">
         <div class="social-box">
-            <div class="header">
-                <h4><?php echo $template['title']; ?>
-            </div>
             <!-- BEGIN TABLE BODY -->
             <div class="body">
                 <input type="text" id="keyword" class="input-block-level" placeholder="<?php echo lang('keyword_more_than_2_letter'); ?>">
@@ -19,12 +22,12 @@
                         </tr>
                     </thead>
                     <tbody>
-<?php if ( empty($list) ): ?>
+<?php if ( empty($sheet['cells']) ): ?>
                         <tr>
                             <td colspan="11"><a href="<?php echo site_url(CLASS_URI.'/namelist_import/'.$aid); ?>">无数据，上传表格</a></td>
                         </tr>
 <?php else: ?>
-<?php foreach($list as $item): ?>
+<?php foreach($sheet['cells'] as $item): ?>
                         <tr>
                             <td><?php echo $item['ordered_id']; ?></td>
                             <td>
@@ -33,7 +36,7 @@
                             <td>
                                 <a href="javascript:void(0);" data-type="text" data-name="community" data-pk="<?php echo $item['id']; ?>" data-placeholder="Required" data-original-title="<?php echo lang('community_title'); ?>"<?php if(! $item['community'] ) echo ' class="editable-click editable-empty"'; ?>><?php echo $item['community'] ? $item['community'] : 'Empty'; ?></a>
                             </td>
-                            <td><?php echo $item['signed'] ? '<span class="label-success" data-toggle="tooltip" title="'.date('Y-m-d H:i:s', $item['signed']).'">'.time_past($item['signed']).'</span>' : '<span class="label">未到</span>'; ?></td>
+                            <td><?php echo !$item['signed'] ? '<span class="label">未到</span>' : '<span class="label-success" data-toggle="tooltip" title="'.date('Y-m-d H:i:s', $item['signed']).'">'.time_past($item['signed']).'</span>'; ?></td>
                             <td><?php echo $item['barcode']; ?></td>
                             <td>
                                 <a href="<?php echo site_url('admincp/activity/namelist_del/'.$item['id']); ?>" title="<?php echo lang('delete'); ?>" onclick="return confirm('<?php echo lang('delete_warning'); ?>');"><i class="icon-trash"></i><?php echo lang('delete'); ?></a>
@@ -55,3 +58,7 @@
         </div>
     </div>
 </div>
+<script type="text/javascript">
+<?php echo $template['javascript']; ?>
+</script>
+<?php endif; ?>

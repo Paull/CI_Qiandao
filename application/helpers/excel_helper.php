@@ -28,7 +28,7 @@ if ( !function_exists('get_sheet_list') )
 
 if ( !function_exists('load_sheet_data') )
 {
-    function load_sheet_data($filepath, $sheet_id, $type='rows')
+    function load_sheet_data($filepath, $sheet_id, $row_limit=array(1,9999), $column_limit=array(0,9999))
     {
         $excel['type'] = PHPExcel_IOFactory::identify($filepath);
 
@@ -40,10 +40,14 @@ if ( !function_exists('load_sheet_data') )
         $obj_sheet = $obj_excel->getSheet($sheet_id);
 
         $data = array();
-        $row = 1;
+        $row = $row_limit[0];
+
         list($data['row_max'], $data['column_max']) = _get_sheet_max_row_and_column($obj_sheet);
-        $data['title'] = _get_sheet_title($obj_sheet, $row);
-        $data['comment'] = _get_sheet_comment($obj_sheet, $row);
+        $data['row_max'] > $row_limit[1] && $data['row_max'] = $row_limit[1];
+        $data['column_max'] > $column_limit[1] && $data['column_max'] = $column_limit[1];
+
+        //$data['title'] = _get_sheet_title($obj_sheet, $row);
+        //$data['comment'] = _get_sheet_comment($obj_sheet, $row);
         $data['start_row'] = _get_sheet_content_row($obj_sheet, $row);
 
         for($row=$data['start_row']; $row<=$data['row_max']; $row++)
@@ -78,9 +82,9 @@ if ( !function_exists('analyse_sheet_data') )
 {
     function analyse_sheet_data($data)
     {
-        $data['title_year'] = _get_title_year($data['title']);
-        $data['title_status'] = _get_title_status($data['title']);
-        $data['title_category'] = _get_title_category($data['title'], 'dropdown');
+//        $data['title_year'] = _get_title_year($data['title']);
+//        $data['title_status'] = _get_title_status($data['title']);
+//        $data['title_category'] = _get_title_category($data['title'], 'dropdown');
 
         $column_a = '';
         //如果是第0列有值就给column_a赋值，反之，如果第0列无值就从column_a赋值
@@ -97,7 +101,7 @@ if ( !function_exists('analyse_sheet_data') )
         }
 
         //28=项目年度计划表, 18=项目储备库, 19=项目待建库, 30=项目在建库, 31=项目建成库, 13=项目入库填报表
-        $allowed_column_number = array(28, 18, 19, 30, 31, 13);
+        $allowed_column_number = array(2);
         if ( !in_array($data['column_max'], $allowed_column_number) )
         {
             $data['error'] = '不支持的表单样式，请确认表单是否符合导入标准。';
@@ -503,38 +507,54 @@ function _analyse_table_13($cells)
     return $tmp;
 }
 
+//分析项目表格2列
+function _analyse_table_2($cells)
+{
+    $tmp = array();
+
+    foreach($cells as $key=>$row)
+    {
+        //过滤不是项目的行，条件：第1列为空
+        if ( empty($row[1]) )
+        {
+            continue;
+        }
+        else
+        {
+            $tmp[$key]['ordered_id'] = $row[0];
+            $tmp[$key]['realname']   = $row[1];
+            $tmp[$key]['community']  = $row[2];
+        }
+    }
+
+    return $tmp;
+}
+
 //同步数据库
 if ( !function_exists('sync_database') )
 {
-    function sync_database($data)
+    function sync_database($aid, $data)
     {
         if ( isset($data['error']) ) return $data;
         $CI =& get_instance();
         foreach($data['cells'] as $key=>$value)
         {
-            $row = $CI->m_project->where('project_name', $value['project_name'])
-                                 ->where('unit', $value['unit'])
-                                 ->where('location', $value['location'])
+            $row = $CI->m_namelist->where('aid', $aid)
+                                 ->where('ordered_id', $value['ordered_id'])
                                  ->get()->row_array();
+            $value['aid'] = $aid;
             if( !empty($row) )
             {//存在老数据，更新数据
                 //TODO: 如果新老数据有不同的地方，应提示数据有更新
                 $value['id'] = $row['id'];
-                if ( !isset($value['uid']) )
-                {
-                    $value['uid'] = $CI->session->userdata('uid');
-                }
-                $CI->m_project->modify($value);
-                $data['cells'][$key] = $CI->m_project->where('project.id', $value['id'])->select('member.realname, project.*')->join('member', 'member.id=project.uid', 'left')->get()->row_array();
+                $CI->m_namelist->modify($value);
+                $data['cells'][$key] = $CI->m_namelist->where('id', $value['id'])->limit(1)->get()->row_array();
             }
             else
             {//不存在老数据，插入数据
-                if ( !isset($value['uid']) )
-                {
-                    $value['uid'] = $CI->session->userdata('uid');
-                }
-                $value['id'] = $CI->m_project->modify($value);
-                $data['cells'][$key] = $CI->m_project->where('project.id', $value['id'])->select('member.realname, project.*')->join('member', 'member.id=project.uid', 'left')->get()->row_array();
+                $value['barcode'] = $CI->m_namelist->generate_uniqid();
+                $value['id'] = $CI->m_namelist->modify($value);
+                $data['cells'][$key] = $CI->m_namelist->where('id', $value['id'])->limit(1)->get()->row_array();
             }
         }
         return $data;
@@ -578,7 +598,7 @@ if ( !function_exists('_get_sheet_comment') )
 //得到表单正文起始行
 if ( !function_exists('_get_sheet_content_row') )
 {
-    function _get_sheet_content_row(&$sheet, &$row, $default=array('序号', '项目名称'))
+    function _get_sheet_content_row(&$sheet, &$row, $default=array('序号'))
     {
         $title1 = $sheet->getCell('A'.$row++)->getValue();
         $title2 = $sheet->getCell('A'.$row++)->getValue();

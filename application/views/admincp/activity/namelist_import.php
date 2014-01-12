@@ -35,7 +35,7 @@
                                     <td><?php echo byte_format($attachment['file_size']); ?></td>
                                     <td><span data-toggle="tooltip" title="<?php echo date('y-m-d h:i:s', $attachment['created']); ?>"><?php echo time_past($attachment['created']); ?></span></td>
                                     <td>
-                                        <a href="<?php echo base_url('admin/activity/sheets/'.$attachment['id']); ?>" class="btn btn-primary">导入数据库</a>
+                                        <a href="<?php echo base_url('admincp/activity/sheets/'.$aid.'/'.$attachment['id']); ?>" class="btn btn-primary">导入数据库</a>
                                         <a href="<?php echo base_url('member/attachment/destroy/'.$attachment['id']); ?>" class="btn btn-danger" onclick="return confirm('该操作不可恢复！删除该文件？');">删除文件</a>
                                     </td>
                                 </tr>

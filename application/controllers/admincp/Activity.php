@@ -68,19 +68,19 @@ $('.editable').editable({
         $this->load->view($this->_layout, $this->_data);
     }
 
-    public function namelist($id)
+    public function namelist($aid)
     {
-        $this->_data['id'] = $id = intval($id);
-        $activity = $this->{$this->_model}->where('id', $id)->get()->row_array();
+        $this->_data['aid'] = $aid = intval($aid);
+        $activity = $this->{$this->_model}->where('id', $aid)->get()->row_array();
         if ( empty($activity) )
         {
             $this->load->view('common/message', array('message'=>"找不到指定的活动", 'url'=>site_url(CLASS_URI)));
+            return;
         }
 
         $this->_data['template']['title'] = '活动名单';
         $this->_data['template']['breadcrumbs'][] = array('uri'=>CLASS_URI, 'title'=>'活动列表');
-        $this->_data['template']['breadcrumbs'][] = array('uri'=>METHOD_URI.'/'.$id, 'title'=>$activity['name']);
-        $this->_data['template']['breadcrumbs'][] = array('uri'=>METHOD_URI.'/'.$id, 'title'=>$this->_data['template']['title']);
+        $this->_data['template']['breadcrumbs'][] = array('uri'=>$this->uri->uri_string, 'title'=>$activity['name']);
 
         $this->_data['template']['styles'][] = STATIC_URL.'plugins/jquery.x-editable/css/bootstrap-editable.css';
         $this->_data['template']['scripts'][] = STATIC_URL.'plugins/jquery.x-editable/js/bootstrap-editable.min.js';
@@ -122,19 +122,20 @@ $('.editable').editable({
     }
 });\n";
 
-        $this->_data['list'] = $this->m_namelist->where('aid', $id)->order_by('ordered_id')->get()->result_array();
+        $this->_data['list'] = $this->m_namelist->where('aid', $aid)->order_by('ordered_id')->get()->result_array();
 
         //加载模板
         $this->load->view($this->_layout, $this->_data);
     }
 
-    public function namelist_import($id)
+    public function namelist_import($aid)
     {
-        $this->_data['id'] = $id = intval($id);
-        $activity = $this->{$this->_model}->where('id', $id)->get()->row_array();
+        $this->_data['aid'] = $aid = intval($aid);
+        $activity = $this->{$this->_model}->where('id', $aid)->get()->row_array();
         if ( empty($activity) )
         {
             $this->load->view('common/message', array('message'=>"找不到指定的活动", 'url'=>site_url(CLASS_URI)));
+            return;
         }
 
         $this->load->model('m_attachment');
@@ -142,8 +143,8 @@ $('.editable').editable({
 
         $this->_data['template']['title'] = '导入名单表格';
         $this->_data['template']['breadcrumbs'][] = array('uri'=>CLASS_URI, 'title'=>'活动列表');
-        $this->_data['template']['breadcrumbs'][] = array('uri'=>METHOD_URI.'/'.$id, 'title'=>$activity['name']);
-        $this->_data['template']['breadcrumbs'][] = array('uri'=>METHOD_URI.'/'.$id, 'title'=>$this->_data['template']['title']);
+        $this->_data['template']['breadcrumbs'][] = array('uri'=>CLASS_URI.'/namelist/'.$aid, 'title'=>$activity['name']);
+        $this->_data['template']['breadcrumbs'][] = array('uri'=>$this->uri->uri_string, 'title'=>$this->_data['template']['title']);
 
         $this->_data['template']['scripts'][] = STATIC_URL.'plugins/jquery.gritter/jquery.gritter.min.js';
 
@@ -195,7 +196,7 @@ var table_filelist_prepend = function(data){
     tr.append('<td>'+data.file_size+'</td>');
     tr.append('<td>刚刚</td>');
     tr.append('<td></td>');
-    tr.find('td:last').append('<a href=\"".base_url('admincp/activity/sheets')."/'+data.id+'.html\" class=\"btn btn-primary\">导入数据库</a>\\n')
+    tr.find('td:last').append('<a href=\"".base_url('admincp/activity/sheets/'.$aid)."/'+data.id+'.html\" class=\"btn btn-primary\">导入数据库</a>\\n')
                       .append('<a href=\"".base_url('member/attachment/destroy')."/'+data.id+'\" class=\"btn btn-danger\" onclick=\"return confirm(\'该操作不可恢复！删除该文件？\');\">删除文件</a>');
     if ($('#filelist tr').length > 11) $('#filelist tr:last').remove();
 };\n";
@@ -203,6 +204,139 @@ var table_filelist_prepend = function(data){
         $this->_data['attachments'] = $this->m_attachment->limit(10)->order_by('id', 'DESC')->where('uid', $this->_data['self']['id'])->get()->result_array();
 
         //加载模板
+        $this->load->view($this->_layout, $this->_data);
+    }
+
+    //分析上传的表格
+    public function sheets($aid, $file_id)
+    {
+        $this->load->model('m_attachment');
+        $this->load->helper('excel');
+
+        //格式得到的参数
+        $this->_data['aid'] = $aid = intval($aid);
+        $this->_data['file_id'] = $file_id = intval($file_id);
+
+        $activity = $this->{$this->_model}->where('id', $aid)->get()->row_array();
+        if ( empty($activity) )
+        {
+            $this->load->view('common/message', array('message'=>"找不到指定的活动", 'url'=>site_url(CLASS_URI)));
+            return;
+        }
+
+        //从数据库读取文件
+        $file = $this->m_attachment->where('id', $file_id)->get()->row_array();
+        $file['full_path'] = ATTACHMENT_PATH.$file['file_name'];
+        if(!file_exists($file['full_path']))
+        {
+            $this->load->view('common/message', array('message' => '出错！文件丢失！'));
+            return;
+        }
+
+        $this->_data['template']['title'] = '表单列表';
+        $this->_data['template']['breadcrumbs'][] = array('uri'=>CLASS_URI, 'title'=>'活动列表');
+        $this->_data['template']['breadcrumbs'][] = array('uri'=>CLASS_URI.'/namelist/'.$aid, 'title'=>$activity['name']);
+        $this->_data['template']['breadcrumbs'][] = array('uri'=>CLASS_URI.'/namelist_import/'.$aid, 'title'=>'导入名单表格');
+        $this->_data['template']['breadcrumbs'][] = array('uri'=>$this->uri->uri_string, 'title'=>$this->_data['template']['title'].': '.$file['client_name']);
+
+        $this->_data['template']['styles'][] = BASEURL.'assets/plugins/jquery.x-editable/css/bootstrap-editable.css';
+        $this->_data['template']['scripts'][] = BASEURL.'assets/plugins/jquery.x-editable/js/bootstrap-editable.min.js';
+
+        $this->_data['template']['styles'][] = STATIC_URL.'plugins/jquery.footable/css/footable.core.min.css';
+        $this->_data['template']['scripts'][] = STATIC_URL.'plugins/jquery.footable/dist/footable.min.js';
+        $this->_data['template']['scripts'][] = STATIC_URL.'plugins/jquery.footable/dist/footable.filter.min.js';
+        $this->_data['template']['scripts'][] = STATIC_URL.'plugins/jquery.footable/dist/footable.sort.min.js';
+        $this->_data['template']['scripts'][] = STATIC_URL.'plugins/jquery.footable/dist/footable.paginate.min.js';
+
+        //得到表格内的表单列表
+        $this->_data['sheets'] = get_sheet_list($file['full_path']);
+
+        $this->_data['template']['javascript'] .= "
+$('.tabbable .nav a').on('shown', function (e) {
+    $($(e.target).attr('href')).html('<img src=\"".STATIC_URL."images/loading.gif\">');
+    $($(e.target).attr('href')).load($(e.target).attr('data-url'));
+    $(this).tab('show');
+}).eq(0).tab('show');\n";
+        $this->load->view($this->_layout, $this->_data);
+    }
+
+    //分析表格中的表单
+    public function sheet($aid, $file_id, $sheet_id)
+    {
+        $this->load->model('m_attachment');
+        $this->load->helper('excel');
+
+        //格式得到的参数
+        $this->_data['aid'] = $aid = intval($aid);
+        $this->_data['file_id'] = $file_id = intval($file_id);
+        $this->_data['sheet_id'] = $sheet_id = intval($sheet_id);
+
+        $activity = $this->{$this->_model}->where('id', $aid)->get()->row_array();
+        if ( empty($activity) )
+        {
+            $this->load->view('common/message', array('message'=>"找不到指定的活动", 'url'=>site_url(CLASS_URI)));
+            return;
+        }
+
+        //从数据库读取文件
+        $file = $this->m_attachment->where('id', $file_id)->get()->row_array();
+        $file['full_path'] = ATTACHMENT_PATH.$file['file_name'];
+        if(!file_exists($file['full_path']))
+        {
+            $this->load->view('common/message', array('message' => '出错！文件丢失！'));
+            return;
+        }
+
+        //得到表格内的表单列表
+        $this->_data['sheets'] = get_sheet_list($file['full_path']);
+
+        $this->_data['template']['title'] = '表单';
+        $this->_data['template']['breadcrumbs'][] = array('uri'=>CLASS_URI, 'title'=>'活动列表');
+        $this->_data['template']['breadcrumbs'][] = array('uri'=>CLASS_URI.'/namelist/'.$aid, 'title'=>$activity['name']);
+        $this->_data['template']['breadcrumbs'][] = array('uri'=>CLASS_URI.'/namelist_import/'.$aid, 'title'=>'导入名单表格');
+        $this->_data['template']['breadcrumbs'][] = array('uri'=>CLASS_URI.'/sheets/'.$aid.'/'.$file_id, 'title'=>'表单列表:'.$file['client_name']);
+        $this->_data['template']['breadcrumbs'][] = array('uri'=>$this->uri->uri_string, 'title'=>$this->_data['template']['title'].': '.$this->_data['sheets'][$sheet_id]['worksheetName']);
+
+        $this->_data['template']['styles'][] = BASEURL.'assets/plugins/jquery.x-editable/css/bootstrap-editable.css';
+        $this->_data['template']['scripts'][] = BASEURL.'assets/plugins/jquery.x-editable/js/bootstrap-editable.min.js';
+
+        $this->_data['template']['styles'][] = STATIC_URL.'plugins/jquery.footable/css/footable.core.min.css';
+        $this->_data['template']['scripts'][] = STATIC_URL.'plugins/jquery.footable/dist/footable.min.js';
+        $this->_data['template']['scripts'][] = STATIC_URL.'plugins/jquery.footable/dist/footable.filter.min.js';
+        $this->_data['template']['scripts'][] = STATIC_URL.'plugins/jquery.footable/dist/footable.sort.min.js';
+        $this->_data['template']['scripts'][] = STATIC_URL.'plugins/jquery.footable/dist/footable.paginate.min.js';
+        $this->_data['template']['javascript'] .= "
+$(\"[data-toggle='tooltip']\").tooltip();
+
+$('.footable').footable();
+
+$('.editable').editable({
+    selector: 'a[data-type]',
+    ajaxOptions: {
+        dataType: 'json'
+    },
+    url: '".base_url(CLASS_URI.'/ajax_modify')."',
+    validate: function(value) {
+        if($.trim(value) == '') return '该项必须填写.';
+    },
+    params: function(params) {
+        params.hash = hash;
+        return params;
+    },
+    success: function(response, newValue) {
+        if(!response.success){
+            return response.msg;
+        }else{
+            return {newValue: response.newValue}
+        }
+    }
+});\n";
+
+        $data = load_sheet_data($file['full_path'], $sheet_id, array(1,996), array(0,2));
+        $data = analyse_sheet_data($data);
+
+        $this->_data['sheet'] = sync_database($aid, $data);
+
         $this->load->view($this->_layout, $this->_data);
     }
 
@@ -273,6 +407,15 @@ var table_filelist_prepend = function(data){
         $id = intval($id);
 
         $this->{$this->_model}->destroy($id);
+
+        redirect(REFERER_URI);
+    }
+
+    //名字删除
+    public function namelist_del($id){
+        $id = intval($id);
+
+        $this->m_namelist->where('id', $id)->delete();
 
         redirect(REFERER_URI);
     }
