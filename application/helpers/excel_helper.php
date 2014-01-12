@@ -522,8 +522,8 @@ function _analyse_table_2($cells)
         else
         {
             $tmp[$key]['ordered_id'] = $row[0];
-            $tmp[$key]['realname']   = $row[1];
-            $tmp[$key]['community']  = $row[2];
+            $tmp[$key]['community']  = $row[1];
+            $tmp[$key]['realname']   = $row[2];
         }
     }
 

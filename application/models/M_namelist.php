@@ -78,7 +78,7 @@ class M_namelist extends MY_Model {
      */
     public function generate_uniqid()
     {
-        return substr(uniqid(rand()), 0, 10);
+        return '0'.substr(uniqid(rand()), 0, 11);
     }
 
 }

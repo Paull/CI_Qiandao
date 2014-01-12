@@ -29,7 +29,7 @@ class MY_Controller extends CI_Controller {
             $this->_data['self'] = NULL;
         }
 
-        if ( CLASS_URI != 'welcome' && !isset($this->_data['self']['identity']) )
+        if ( !in_array(CLASS_URI, array('welcome', 'identifier')) && !isset($this->_data['self']['identity']) )
         {
             redirect('login');
         }

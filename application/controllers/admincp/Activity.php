@@ -68,6 +68,38 @@ $('.editable').editable({
         $this->load->view($this->_layout, $this->_data);
     }
 
+    public function printable($aid)
+    {
+        $this->load->library('pagination');
+        
+        $this->_data['aid'] = $aid = intval($aid);
+        $activity = $this->{$this->_model}->where('id', $aid)->get()->row_array();
+        if ( empty($activity) )
+        {
+            $this->load->view('common/message', array('message'=>"找不到指定的活动", 'url'=>site_url(CLASS_URI)));
+            return;
+        }
+
+        $this->_data['template']['title'] = '活动名单';
+        $this->_data['template']['breadcrumbs'][] = array('uri'=>CLASS_URI, 'title'=>'活动列表');
+        $this->_data['template']['breadcrumbs'][] = array('uri'=>$this->uri->uri_string, 'title'=>$activity['name']);
+
+        //分页参数配置
+        $config['uri_segment'] = 3;
+        $config['base_url']   = base_url('api/images/create_image/'.$aid);
+        $config['suffix']     = $this->config->item('url_suffix');
+        $config['total_rows'] = $this->m_namelist->get()->num_rows();
+        $config['num_links']  = 100;
+        $config['per_page']   = 12;
+
+        //加载分页配置
+        $this->pagination->initialize($config);
+        $this->_data['pager'] = $this->pagination->create_links();
+
+        //加载模板
+        $this->load->view($this->_layout, $this->_data);
+    }
+
     public function namelist($aid)
     {
         $this->_data['aid'] = $aid = intval($aid);
