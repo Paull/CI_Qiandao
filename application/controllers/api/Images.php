@@ -46,6 +46,28 @@ class Images extends CI_Controller {
     //    }
     //}
 
+    //public function test3($aid, $page=0)
+    //{
+    //    $this->load->model('m_namelist');
+    //    require  APPPATH . 'libraries' . DIRECTORY_SEPARATOR . 'php-barcode.php';
+    //    $aid = intval($aid);
+    //    $page = intval($page);
+    //    $perpage = 3;
+
+    //    $guests = $this->m_namelist->select('ordered_id, realname, community, barcode')->where('aid', $aid)->where_in('id', array(8,865,1025))->order_by('ordered_id')->limit($perpage, $page)->get()->result_array();
+    //    foreach($guests as $key=>$value)
+    //    {
+    //        $guests[$key]['ordered_id'] = str_pad($value['ordered_id'], 4, '0', STR_PAD_LEFT);
+    //        $bars=barcode_encode($value['barcode'], 'ANY');
+    //        $guests[$key]['barcode_img'] = barcode_outimage($bars['text'],$bars['bars'], 3);
+//  //     	Header("Content-type: image/png");
+//  //     	ImagePng($guests[$key]['barcode_img']);
+//  //      exit;
+    //    }
+
+	//	$result = $this->_create_image('lianhao', $guests, $page);
+    //}
+
     public function create_image($aid, $page=0)
     {
         $this->load->model('m_namelist');
@@ -118,10 +140,10 @@ class Images extends CI_Controller {
 		$targetpath = FCPATH . 'photos' . DIRECTORY_SEPARATOR . $type . '_' . $page . '.png';
 
         //保存图片
-        ImagePng($image, $targetpath);
+//        ImagePng($image, $targetpath);
         //查看图片
-       	//Header("Content-type: image/png");
-       	//ImagePng($image);
+       	Header("Content-type: image/png");
+       	ImagePng($image);
 
         ImageDestroy($image);
         return true;
