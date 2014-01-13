@@ -10,7 +10,7 @@ $lang['start_at_title'] = '请选译'.$lang['start_at'];
 $lang['namelist'] = '名单';
 $lang['realname'] = '姓名';
 $lang['community'] = '社区';
-$lang['signed'] = '已签到';
+$lang['signed'] = '签到时间';
 $lang['barcode'] = '条码编号';
 
 $lang['keyword_of_project_name'] = '项目名称或地点名称关键字';

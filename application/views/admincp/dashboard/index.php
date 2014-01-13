@@ -9,7 +9,7 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>序号<th>
+                            <th>序号</th>
                             <th><?php echo lang('realname'); ?></th>
                             <th><?php echo lang('community'); ?></th>
                             <th><?php echo lang('signed'); ?></th>
@@ -31,9 +31,9 @@ foreach($list as $key=>$item): ?>
                         <tr>
 <?php endif; ?>
                             <td><?php echo $item['ordered_id']; ?></td>
-                            <td><?php echo $item['realname']; ?></a></td>
-                            <td><?php echo $item['community']; ?></a></td>
-                            <td id="id<?php echo $item['id']; ?>"><?php echo $item['signed'] ? '<span class="label label-success" data-toggle="tooltip" title="'.date('Y-m-d H:i:s', $item['signed']).'">'.time_past($item['signed']).'</span>' : '<span class="label">未到</span>'; ?></td>
+                            <td><?php echo $item['realname']; ?></td>
+                            <td><?php echo $item['community']; ?></td>
+                            <td id="id<?php echo $item['id']; ?>"><?php echo $item['signed'] ? '<span class="label label-success">'.date('H:i:s', $item['signed']).'</span>' : '<span class="label label-notyet">未到</span>'; ?></td>
 <?php if ( $key % 3 == 2 || $key == $max ): ?>
                         </tr>
 <?php endif; ?>

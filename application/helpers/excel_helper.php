@@ -563,7 +563,7 @@ if ( !function_exists('sync_database') )
                     list(,,$tmp) = explode(':', $number);
                     $barcode .= $tmp;
                 }
-                $value['barcode'] = substr($barcode_encoded, 1);
+                $value['barcode'] = substr($barcode, 1);
 
                 $value['id'] = $CI->m_namelist->modify($value);
                 $data['cells'][$key] = $CI->m_namelist->where('id', $value['id'])->limit(1)->get()->row_array();

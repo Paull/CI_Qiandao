@@ -26,7 +26,8 @@
  */
 
 define('SITENAME', '丽水在线签到程序');
-define('SITEDOMAIN', substr_count($_SERVER['SERVER_NAME'], '.') > 1 ? substr($_SERVER['SERVER_NAME'], strrpos($_SERVER['SERVER_NAME'], '.', strrpos($_SERVER['SERVER_NAME'], '.')-strlen($_SERVER['SERVER_NAME'])-1)+1) : $_SERVER['SERVER_NAME']);
+define('SITEDOMAIN', 'lsol.com.cn');
+//define('SITEDOMAIN', substr_count($_SERVER['SERVER_NAME'], '.') > 1 ? substr($_SERVER['SERVER_NAME'], strrpos($_SERVER['SERVER_NAME'], '.', strrpos($_SERVER['SERVER_NAME'], '.')-strlen($_SERVER['SERVER_NAME'])-1)+1) : $_SERVER['SERVER_NAME']);
 
 /*
 |--------------------------------------------------------------------------

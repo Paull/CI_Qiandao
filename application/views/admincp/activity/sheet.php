@@ -36,7 +36,7 @@
                             <td>
                                 <a href="javascript:void(0);" data-type="text" data-name="community" data-pk="<?php echo $item['id']; ?>" data-placeholder="Required" data-original-title="<?php echo lang('community_title'); ?>"<?php if(! $item['community'] ) echo ' class="editable-click editable-empty"'; ?>><?php echo $item['community'] ? $item['community'] : 'Empty'; ?></a>
                             </td>
-                            <td><?php echo !$item['signed'] ? '<span class="label">未到</span>' : '<span class="label-success" data-toggle="tooltip" title="'.date('Y-m-d H:i:s', $item['signed']).'">'.time_past($item['signed']).'</span>'; ?></td>
+                            <td><?php echo !$item['signed'] ? '<span class="label">未到</span>' : '<span class="label label-success">'.date('H:i:s', $item['signed']).'</span>'; ?></td>
                             <td><?php echo $item['barcode']; ?></td>
                             <td>
                                 <a href="<?php echo site_url('admincp/activity/namelist_del/'.$item['id']); ?>" title="<?php echo lang('delete'); ?>" onclick="return confirm('<?php echo lang('delete_warning'); ?>');"><i class="icon-trash"></i><?php echo lang('delete'); ?></a>

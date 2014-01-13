@@ -81,10 +81,10 @@ $query_builder = TRUE;
 
 $db['default'] = array(
 	'dsn'	   => '',
-	'hostname' => 'localhost',
-	'username' => 'root',
-	'password' => 'root',
-	'database' => 'ci_admin',
+	'hostname' => 'data01',
+	'username' => 'dzt',
+	'password' => '123456a',
+	'database' => 'lsol_qiandao',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => 'cia_',
 	'pconnect' => TRUE,

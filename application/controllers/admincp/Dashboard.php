@@ -41,10 +41,10 @@ var status_update = function(){
     }, 'json');
     $('#barcode').focus();
 };
-setInterval(status_update, 3000);
+setInterval(status_update, 5000);
 ";
 
-        $this->_data['list'] = $this->m_namelist->where('aid', 1)->get()->result_array();
+        $this->_data['list'] = $this->m_namelist->where('aid', 1)->order_by('ordered_id')->get()->result_array();
 
         $this->load->view($this->_layout, $this->_data);
 	}
@@ -64,7 +64,7 @@ setInterval(status_update, 3000);
         $data = $this->m_namelist->select('id, signed')->where('aid', 1)->get()->result_array();
         foreach($data as $key=>$value)
         {
-            if($value['signed']) $data[$key]['signed'] = time_past($value['signed']);
+            if($value['signed']) $data[$key]['signed'] = date('H:i:s', $value['signed']);
         }
         $this->output->set_output(json_encode($data));
     }
