@@ -3,8 +3,18 @@
 return array(
     'superman' => array(
         'admincp/dashboard' => array(
-            'title'    => '控制面板',
-            'icon'     => 'home.png',
+            'title'    => '签到',
+            'icon'     => 'drawings.png',
+        ),
+        'admincp/dashboard/signed' => array(
+            'title'    => '已到',
+            'icon'     => 'check.png',
+            'badge'    => '',
+        ),
+        'admincp/dashboard/unsigned' => array(
+            'title'    => '未到',
+            'icon'     => 'busy.png',
+            'badge'    => '',
         ),
         'collapse-members'  => array(
             'title'    => '权限管理',

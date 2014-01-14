@@ -54,11 +54,11 @@ class Images extends CI_Controller {
     //    $page = intval($page);
     //    $perpage = 3;
 
-    //    $guests = $this->m_namelist->select('ordered_id, realname, community, barcode')->where('aid', $aid)->where_in('id', array(8,865,1025))->order_by('ordered_id')->limit($perpage, $page)->get()->result_array();
+    //    $guests = $this->m_namelist->select('ordered_id, realname, community, barcode_orign')->where('aid', $aid)->where_in('id', array(8,865,1025))->order_by('ordered_id')->limit($perpage, $page)->get()->result_array();
     //    foreach($guests as $key=>$value)
     //    {
     //        $guests[$key]['ordered_id'] = str_pad($value['ordered_id'], 4, '0', STR_PAD_LEFT);
-    //        $bars=barcode_encode($value['barcode'], 'ANY');
+    //        $bars=barcode_encode($value['barcode_orign'], 'ANY');
     //        $guests[$key]['barcode_img'] = barcode_outimage($bars['text'],$bars['bars'], 3);
 //  //     	Header("Content-type: image/png");
 //  //     	ImagePng($guests[$key]['barcode_img']);
@@ -76,11 +76,11 @@ class Images extends CI_Controller {
         $page = intval($page);
         $perpage = 12;
 
-        $guests = $this->m_namelist->select('ordered_id, realname, community, barcode')->where('aid', $aid)->order_by('ordered_id')->limit($perpage, $page)->get()->result_array();
+        $guests = $this->m_namelist->select('ordered_id, realname, community, barcode_orign')->where('aid', $aid)->order_by('ordered_id')->limit($perpage, $page)->get()->result_array();
         foreach($guests as $key=>$value)
         {
             $guests[$key]['ordered_id'] = str_pad($value['ordered_id'], 4, '0', STR_PAD_LEFT);
-            $bars=barcode_encode($value['barcode'], 'ANY');
+            $bars=barcode_encode($value['barcode_orign'], 'ANY');
             $guests[$key]['barcode_img'] = barcode_outimage($bars['text'],$bars['bars'], 3);
 //       	Header("Content-type: image/png");
 //       	ImagePng($guests[$key]['barcode_img']);
