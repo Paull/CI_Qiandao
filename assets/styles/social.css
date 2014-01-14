@@ -5790,9 +5790,11 @@ a.thumbnail:focus {
   position: absolute;
   margin-top: 3px;
 }
+/*
 .social-sidebar .menu .accordion-group.active .accordion-heading .accordion-toggle .badge {
   display: none !important;
 }
+*/
 .social-sidebar .menu .accordion-group.active .accordion-body li {
   display: none;
 }
