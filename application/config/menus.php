@@ -57,9 +57,19 @@ return array(
         ),
     ),
     'user' => array(
-        'member/dashboard'  => array(
-            'title'    => '控制面板',
-            'icon'     => 'home.png',
+        'member/dashboard' => array(
+            'title'    => '签到',
+            'icon'     => 'drawings.png',
+        ),
+        'member/dashboard/signed' => array(
+            'title'    => '已到',
+            'icon'     => 'check.png',
+            'badge'    => '',
+        ),
+        'member/dashboard/unsigned' => array(
+            'title'    => '未到',
+            'icon'     => 'busy.png',
+            'badge'    => '',
         ),
     ),
 );
