@@ -29,13 +29,29 @@ $('#barcode').keypress(function(event){
                     $.gritter.add({
                         title: data.barcode,
                         text: '序号:'+data.ordered_id+'<br>姓名:'+data.realname+'<br>社区:'+data.community,
-                        class_name: 'gritter-light'
+                        class_name: 'gritter-light',
+                        sticky: false,
+                        before_open: function(){
+                            if($('.gritter-item-wrapper').length > 2)
+                            {
+                                $('.gritter-item-wrapper:eq(0)').fadeOut();
+                                return true;
+                            }
+                        }
                     });
                     $('#id'+data.id).html('<span class=\"label label-success\">刚刚</span>');
                 }else{
                     $.gritter.add({
                         title: data.barcode,
-                        text: '序号:'+data.ordered_id+'<br>姓名:'+data.realname+'<br>社区:'+data.community
+                        text: '序号:'+data.ordered_id+'<br>姓名:'+data.realname+'<br>社区:'+data.community,
+                        sticky: false,
+                        before_open: function(){
+                            if($('.gritter-item-wrapper').length > 2)
+                            {
+                                $('.gritter-item-wrapper:eq(0)').fadeOut();
+                                return true;
+                            }
+                        }
                     });
                     $('#id'+data.id).html('<span class=\"label label-success\">刚刚</span>');
                 }
