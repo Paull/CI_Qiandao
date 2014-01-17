@@ -2138,11 +2138,17 @@ div.tagsinput input {
 }
 /* for the light (white) version of the gritter notice */
 .gritter-light.gritter-item-wrapper {
-  background-color: #6d84b4;
+  background-color: #FD0505;
   -webkit-border-radius: 1px;
   -moz-border-radius: 1px;
   border-radius: 1px;
   border: none;
+}
+.gritter-item p {
+  padding: 0;
+  margin: 0;
+  word-wrap: break-word;
+  font-size: 18px;
 }
 .gritter-light .gritter-top {
   background-color: #ffffff;
